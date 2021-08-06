@@ -10,7 +10,22 @@ set -ex
 # if there are multiple accounts with same name (disabled and enabled), you need clean them one by one
 
 az account show
-read -p "Confirm the account and press any key to resume ..."
+read -r -p "Are You Sure? [Yes/No] " input
+ 
+case $input in
+    [yY][eE][sS])
+ echo "Yes"
+ ;;
+    [nN][oO])
+ echo "No"
+ exist 1
+       ;;
+    *)
+ echo "Invalid input..."
+ exit 1
+ ;;
+esac
+
 
 id=$(az account show |jq -r '.id')
 
@@ -36,3 +51,5 @@ for vault in ${vaults}
 do
   az keyvault purge --name ${vault} --subscription ${id}
 done
+
+echo "run this script several times to make sure all resources are cleaned"
